@@ -1,4 +1,3 @@
-import MeetingModal from "@/components/shared/MeetingModal";
 import MeetingTypeList from "@/components/shared/MeetingTypeList";
 import React from "react";
 
@@ -24,7 +23,7 @@ const HomePage = () => {
       </div>
       <div className="">
         <MeetingTypeList />
-      </div> 
+      </div>
     </section>
   );
 };
