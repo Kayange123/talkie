@@ -5,6 +5,7 @@ import {
   CallControls,
   CallParticipantsList,
   CallStatsButton,
+  CallingState,
   PaginatedGridLayout,
   SpeakerLayout,
   useCall,
@@ -21,6 +22,7 @@ import {
 import { LayoutList, Users2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { useSearchParams, useRouter } from "next/navigation";
+import Loader from "./Loader";
 
 type LayoutType = "grid" | "speaker-left" | "speaker-right";
 
@@ -30,10 +32,13 @@ const MeetingRoom = () => {
   const isPersonalRoom = !!searchParams.get("personal");
   const [layout, setLayout] = useState<LayoutType>("speaker-left");
   const [showParticipants, setShowParticipants] = useState(false);
+  const { useLocalParticipant, useCallCallingState } = useCallStateHooks();
 
+  const callingState = useCallCallingState();
+
+  if (callingState !== CallingState.JOINED) return <Loader />;
   const EndCall = () => {
     const call = useCall();
-    const { useLocalParticipant } = useCallStateHooks();
     const participant = useLocalParticipant();
 
     const isMeetingOwner =
@@ -49,7 +54,9 @@ const MeetingRoom = () => {
           await call?.endCall();
           router.push("/");
         }}
-      ></Button>
+      >
+        End Call For Everyone
+      </Button>
     );
   };
   const CallLayout = () => {
@@ -77,7 +84,7 @@ const MeetingRoom = () => {
         </div>
       </div>
       <div className="fixed bottom-0 flex-center w-full gap-4">
-        <CallControls />
+        <CallControls onLeave={() => router.push("/")} />
         <DropdownMenu>
           <div className="">
             <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] p-2 hover:bg-[#4c535b] ">

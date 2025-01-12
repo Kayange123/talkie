@@ -25,7 +25,7 @@ const MeetingModal = ({
   handleClick,
   children,
   buttonIcon: ButtonIcon,
-  buttonText,
+  buttonText = "Schedule Meeting",
   image,
 }: MeetingModalProps) => {
   return (
@@ -46,7 +46,7 @@ const MeetingModal = ({
             onClick={handleClick}
           >
             {ButtonIcon && <ButtonIcon className="size-3 pr-1" />}
-            {buttonText || "Schedule Meeting"}
+            {buttonText}
           </Button>
         </div>
       </DialogContent>
