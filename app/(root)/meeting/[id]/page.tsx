@@ -2,7 +2,7 @@
 
 import Loader from "@/components/shared/Loader";
 import MeetingSetup from "@/components/shared/MeetingSetup";
-import MeetingRoom from "@/components/shared/WaitingRoom";
+import MeetingRoom from "@/components/shared/MeetingRoom";
 import { useGetCallById } from "@/hooks/use-getcall-byid";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
