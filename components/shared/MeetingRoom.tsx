@@ -82,6 +82,21 @@ const MeetingRoom = () => {
 
   const callingState = useCallCallingState();
 
+  // Stream calls leave() for everyone when the host ends the call.
+  if (callingState === CallingState.LEFT) {
+    return (
+      <section className="flex-center h-screen w-full flex-col gap-4 px-6 text-center text-white">
+        <div className="flex-center size-16 rounded-full bg-dark-3">
+          <PhoneOffIcon className="size-8 text-sky-1" />
+        </div>
+        <h1 className="text-2xl font-bold">This meeting has ended</h1>
+        <Button className="mt-2 bg-blue-1" onClick={() => router.push("/")}>
+          Back to home
+        </Button>
+      </section>
+    );
+  }
+
   if (callingState !== CallingState.JOINED) return <Loader fullScreen />;
 
   return (
