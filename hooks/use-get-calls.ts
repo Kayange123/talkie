@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 
 export const useGetCalls = () => {
   const [calls, setCalls] = useState<Call[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const client = useStreamVideoClient();
   const { user } = useUser();
+  const userId = user?.id;
 
   useEffect(() => {
+    if (!client || !userId) return;
+
+    let cancelled = false;
+
     const getCalls = async () => {
-      if (!client || !user) return;
       setIsLoading(true);
 
       try {
@@ -20,22 +24,26 @@ export const useGetCalls = () => {
           filter_conditions: {
             starts_at: { $exists: true },
             $or: [
-              { created_by_user_id: user.id },
-              { members: { $in: [user.id] } },
+              { created_by_user_id: userId },
+              { members: { $in: [userId] } },
             ],
           },
         });
 
-        setCalls(calls);
+        if (!cancelled) setCalls(calls);
       } catch (error) {
-        console.log(error);
+        console.error("Failed to load calls", error);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
     getCalls();
-  }, [client, user]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [client, userId]);
 
   const now = new Date();
 
@@ -43,9 +51,10 @@ export const useGetCalls = () => {
     ({ state: { startsAt, endedAt } }) =>
       (startsAt && new Date(startsAt) < now) || !!endedAt
   );
-  const upcomingCalls = calls.filter(
-    ({ state: { startsAt } }) => startsAt && new Date(startsAt) > now
-  );
+  const upcomingCalls = calls
+    .filter(({ state: { startsAt } }) => startsAt && new Date(startsAt) > now)
+    // Query is newest-first; show the soonest upcoming meeting first.
+    .reverse();
 
   return { callRecordings: calls, endedCalls, upcomingCalls, isLoading };
 };
