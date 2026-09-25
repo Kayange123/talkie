@@ -25,7 +25,7 @@ const MeetingPage = ({ params }: MeetingRoomProps) => {
       <StreamCall call={call}>
         <StreamTheme>
           {!isSetupComplete ? (
-            <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
+            <MeetingSetup onSetupComplete={() => setIsSetupComplete(true)} />
           ) : (
             <MeetingRoom />
           )}

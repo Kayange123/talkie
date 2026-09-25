@@ -5,53 +5,86 @@ import {
   VideoPreview,
   useCall,
 } from "@stream-io/video-react-sdk";
+import { LoaderCircleIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 
 interface MeetingSetupProps {
-  setIsSetupComplete: (val: boolean) => void;
+  onSetupComplete: () => void;
 }
 
-const MeetingSetup = ({ setIsSetupComplete }: MeetingSetupProps) => {
-  const [isMicCamOn, setIsMicCamOn] = useState<boolean>(false);
+const MeetingSetup = ({ onSetupComplete }: MeetingSetupProps) => {
+  const [joinMuted, setJoinMuted] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
   const call = useCall();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (!call) return;
+    if (joinMuted) {
+      call.camera.disable();
+      call.microphone.disable();
+    } else {
+      call.camera.enable();
+      call.microphone.enable();
+    }
+  }, [joinMuted, call]);
 
   if (!call) {
-    throw new Error("UseCall must be used in streamcall component");
+    throw new Error("MeetingSetup must be rendered inside <StreamCall>");
   }
-  useEffect(() => {
-    if (isMicCamOn) {
-      call?.camera?.disable();
-      call?.microphone?.disable();
-    } else {
-      call?.microphone.enable();
-      call?.camera.enable();
+
+  const joinMeeting = async () => {
+    setIsJoining(true);
+    try {
+      await call.join();
+      onSetupComplete();
+    } catch (error) {
+      console.error("Failed to join call", error);
+      toast({
+        title: "Couldn't join the meeting",
+        description: "Check your connection and try again.",
+        variant: "destructive",
+      });
+      setIsJoining(false);
     }
-  }, [isMicCamOn, call?.camera, call?.microphone]);
+  };
+
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
-      <h1 className="text-2xl font-bold">Setup your Environment</h1>
-      <VideoPreview />
-      <div className="flex h-16 items-center justify-center gap-3">
-        <label className="flex items-center justify-center gap-3 font-medium">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-6 px-4 py-10 text-white">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold sm:text-3xl">Ready to join?</h1>
+        <p className="mt-1 text-muted-foreground">
+          Check your camera and microphone before going in.
+        </p>
+      </div>
+
+      <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-dark-1 shadow-2xl ring-1 ring-white/5">
+        <VideoPreview />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-center gap-4">
+        <label className="flex cursor-pointer select-none items-center gap-3 rounded-lg bg-dark-1 px-4 py-2.5 font-medium">
           <input
             type="checkbox"
-            checked={isMicCamOn}
-            onChange={(e) => setIsMicCamOn(e.target.checked)}
-            className=""
+            checked={joinMuted}
+            onChange={(e) => setJoinMuted(e.target.checked)}
+            className="size-4 accent-blue-1"
           />
-          Join with Mic and Camera off
+          Join with mic and camera off
         </label>
         <DeviceSettings />
       </div>
+
       <Button
-        className="rounded-md bg-green-500 px-4 py-2.5"
-        onClick={() => {
-          call.join();
-          setIsSetupComplete(true);
-        }}
+        size="lg"
+        className="min-w-44 rounded-lg bg-green-600 text-base font-semibold"
+        disabled={isJoining}
+        onClick={joinMeeting}
       >
-        Join Meeting
+        {isJoining && <LoaderCircleIcon className="mr-2 size-4 animate-spin" />}
+        {isJoining ? "Joining…" : "Join meeting"}
       </Button>
     </div>
   );
