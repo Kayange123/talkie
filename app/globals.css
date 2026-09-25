@@ -2,10 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  /* The app is dark-only, so tokens live on :root (no .dark toggle). */
+  :root {
+    --background: 229 26% 12%;
+    --foreground: 0 0% 100%;
+    --popover: 230 24% 15%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 213 95% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 229 27% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 229 27% 20%;
+    --muted-foreground: 222 25% 72%;
+    --accent: 229 27% 22%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 229 22% 24%;
+    --input: 229 22% 26%;
+    --ring: 213 95% 51%;
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
 }
 
 /* ======== stream css overrides ======== */
@@ -74,14 +96,17 @@
   border: 3px solid #565761;
 }
 
-.cl-internal-wkkub3 {
-  color: white;
-}
 .cl-userButtonPopoverActionButton {
   color: white;
 }
 
 /* =============================== */
+
+@layer components {
+  .input-field {
+    @apply w-full rounded-lg border border-input bg-dark-3 px-4 py-3 text-base text-white placeholder:text-muted-foreground transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40;
+  }
+}
 
 @layer utilities {
   .flex-center {
