@@ -3,23 +3,43 @@
 import Loader from "@/components/shared/Loader";
 import MeetingSetup from "@/components/shared/MeetingSetup";
 import MeetingRoom from "@/components/shared/MeetingRoom";
+import { Button } from "@/components/ui/button";
 import { useGetCallById } from "@/hooks/use-getcall-byid";
-import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
+import { VideoOffIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
-interface MeetingRoomProps {
+interface MeetingPageProps {
   params: {
     id: string;
   };
 }
 
-const MeetingPage = ({ params }: MeetingRoomProps) => {
+const MeetingPage = ({ params }: MeetingPageProps) => {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
-  const { user, isLoaded } = useUser();
   const { call, isCallLoading } = useGetCallById(params.id);
 
-  if (isCallLoading || !isLoaded) return <Loader />;
+  if (isCallLoading) return <Loader fullScreen />;
+
+  if (!call) {
+    return (
+      <main className="flex-center h-screen w-full flex-col gap-4 px-6 text-center text-white">
+        <div className="flex-center size-16 rounded-full bg-dark-3">
+          <VideoOffIcon className="size-8 text-sky-1" />
+        </div>
+        <h1 className="text-2xl font-bold">Meeting not found</h1>
+        <p className="max-w-sm text-muted-foreground">
+          This link may be wrong, or the meeting was never created. Check the
+          link with whoever invited you.
+        </p>
+        <Button asChild className="mt-2 bg-blue-1">
+          <Link href="/">Back to home</Link>
+        </Button>
+      </main>
+    );
+  }
+
   return (
     <main className="h-screen w-full">
       <StreamCall call={call}>
