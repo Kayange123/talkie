@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Talkie
 
-## Getting Started
+Video meetings built with Next.js 14 (App Router), [Clerk](https://clerk.com) for authentication and [Stream Video](https://getstream.io/video/) for calls.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Instant meetings, scheduled meetings and joining by link or meeting ID
+- A permanent personal room per user
+- Upcoming and previous meetings, plus call recordings
+- Device check before joining, and grid or speaker layouts in the call
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Install dependencies:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. Copy `.env.example` to `.env.local` and fill in your keys:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` from the Clerk dashboard
+   - `NEXT_PUBLIC_STREAM_API_KEY` and `STREAM_SECRET_KEY` from the Stream dashboard
+   - `NEXT_PUBLIC_BASE_URL`, used as a fallback when building invite links
 
-To learn more about Next.js, take a look at the following resources:
+3. Start the dev server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   Then open [http://localhost:3000](http://localhost:3000).
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Command             | What it does                  |
+| ------------------- | ----------------------------- |
+| `npm run dev`       | Start the development server  |
+| `npm run build`     | Build for production          |
+| `npm run lint`      | Run ESLint                    |
+| `npm run typecheck` | Type-check with `tsc`         |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+CI runs lint and the type check on every push and pull request to `main` and `develop`.

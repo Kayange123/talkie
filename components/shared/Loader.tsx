@@ -1,10 +1,24 @@
+import { cn } from "@/lib/utils";
 import { LoaderCircleIcon } from "lucide-react";
 import React from "react";
 
-const Loader = () => {
+interface LoaderProps {
+  fullScreen?: boolean;
+  className?: string;
+}
+
+const Loader = ({ fullScreen = false, className }: LoaderProps) => {
   return (
-    <div className="flex-center h-screen w-full">
-      <LoaderCircleIcon className="animate-spin size-12 text-white" />
+    <div
+      role="status"
+      aria-label="Loading"
+      className={cn(
+        "flex-center w-full",
+        fullScreen ? "h-screen" : "min-h-[240px]",
+        className
+      )}
+    >
+      <LoaderCircleIcon className="size-10 animate-spin text-blue-1" />
     </div>
   );
 };

@@ -20,21 +20,22 @@ const HomeCard = ({
   handleClick,
 }: HomeCardProps) => {
   return (
-    <div
+    <button
+      type="button"
       onClick={handleClick}
       className={cn(
-        "px-4 py-6 flex flex-col justify-between w-full xl:max-w-[270px] min-h-[260px] rounded-[14px] cursor-pointer",
+        "group flex min-h-[220px] w-full flex-col justify-between rounded-[14px] px-5 py-6 text-left text-white shadow-lg transition duration-200 hover:-translate-y-1 hover:shadow-xl hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-dark-2",
         className
       )}
     >
-      <div className="flex flex-center glassmorphism size-12 rounded-[10px]">
+      <div className="flex-center glassmorphism size-12 rounded-[10px] transition-transform group-hover:scale-110">
         <Icon />
       </div>
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <p className="text-lg">{description}</p>
+      <div className="flex flex-col gap-1">
+        <h2 className="text-2xl font-bold">{title}</h2>
+        <p className="text-lg font-normal text-white/85">{description}</p>
       </div>
-    </div>
+    </button>
   );
 };
 

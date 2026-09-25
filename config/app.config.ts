@@ -1,4 +1,4 @@
 export const appConfig = {
-  title: "Talkie Talkie",
-  description: "Talkie Talkie for video conferencing",
+  title: "Talkie",
+  description: "Talkie for video conferencing",
 };

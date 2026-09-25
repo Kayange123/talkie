@@ -8,15 +8,46 @@ import MeetingCard from "./MeetingCard";
 import {
   BookmarkCheckIcon,
   BookUpIcon,
+  LucideIcon,
   Mic2Icon,
   PlaySquareIcon,
 } from "lucide-react";
 import Loader from "./Loader";
 import { useToast } from "../ui/use-toast";
+import { getMeetingLink } from "@/lib/utils";
 
 interface CallListProps {
   type: "ended" | "upcoming" | "recordings";
 }
+
+const emptyStates: Record<
+  CallListProps["type"],
+  { icon: LucideIcon; title: string; description: string }
+> = {
+  ended: {
+    icon: BookmarkCheckIcon,
+    title: "No previous meetings",
+    description: "Meetings you've held will show up here.",
+  },
+  upcoming: {
+    icon: BookUpIcon,
+    title: "Nothing scheduled",
+    description: "Schedule a meeting from the home page and it'll appear here.",
+  },
+  recordings: {
+    icon: Mic2Icon,
+    title: "No recordings yet",
+    description: "Record a meeting and you can play it back here.",
+  },
+};
+
+const formatDate = (date?: Date | string) =>
+  date
+    ? new Date(date).toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      })
+    : "";
 
 const CallList: FC<CallListProps> = ({ type }) => {
   const router = useRouter();
@@ -24,29 +55,29 @@ const CallList: FC<CallListProps> = ({ type }) => {
   const { isLoading, endedCalls, upcomingCalls, callRecordings } =
     useGetCalls();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
-
-  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}`;
+  const [isLoadingRecordings, setIsLoadingRecordings] = useState(
+    type === "recordings"
+  );
 
   useEffect(() => {
+    if (type !== "recordings" || isLoading) return;
+
     const fetchCallData = async () => {
+      setIsLoadingRecordings(true);
       try {
         const callData = await Promise.all(
           callRecordings.map((call) => call.queryRecordings())
         );
-        const calls = callData
-          .filter((call) => call.recordings.length > 0)
-          .flatMap((record) => record.recordings);
-
-        setRecordings(calls);
+        setRecordings(callData.flatMap((record) => record.recordings));
       } catch (error) {
-        toast({
-          title: "Try Again Later",
-        });
+        toast({ title: "Couldn't load recordings, try again later" });
+      } finally {
+        setIsLoadingRecordings(false);
       }
     };
 
-    if (type === "recordings") fetchCallData();
-  }, [callRecordings, type, toast]);
+    fetchCallData();
+  }, [callRecordings, type, isLoading, toast]);
 
   const getCalls = () => {
     switch (type) {
@@ -61,63 +92,55 @@ const CallList: FC<CallListProps> = ({ type }) => {
     }
   };
 
-  const getNoCallsMessage = (): string => {
-    switch (type) {
-      case "ended":
-        return "No calls were Available";
-      case "upcoming":
-        return "No upcoming calls were Available";
-      case "recordings":
-        return "No recordings were Available";
-      default:
-        return "";
-    }
-  };
-
   const calls = getCalls();
-  const noCallsMessage = getNoCallsMessage();
 
-  if (isLoading) return <Loader />;
+  if (isLoading || isLoadingRecordings) return <Loader />;
+
+  if (calls.length === 0) {
+    const { icon: EmptyIcon, title, description } = emptyStates[type];
+    return (
+      <div className="flex-center min-h-[280px] animate-fade-in flex-col gap-3 rounded-[14px] border border-dashed border-dark-3 px-6 text-center">
+        <div className="flex-center size-14 rounded-full bg-dark-3">
+          <EmptyIcon className="size-7 text-sky-1" />
+        </div>
+        <h2 className="text-xl font-semibold">{title}</h2>
+        <p className="max-w-sm text-muted-foreground">{description}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-      {calls && calls.length > 0 ? (
-        calls.map((call: Call | CallRecording, i) => (
+      {calls.map((call: Call | CallRecording) =>
+        type === "recordings" ? (
           <MeetingCard
-            key={i}
-            icon={
-              type === "ended"
-                ? BookmarkCheckIcon
-                : type === "upcoming"
-                ? BookUpIcon
-                : Mic2Icon
-            }
-            date={
-              (call as Call).state?.startsAt?.toLocaleString() ||
-              (call as CallRecording).start_time
-            }
-            buttonIcon1={type === "recordings" ? PlaySquareIcon : undefined}
+            key={(call as CallRecording).url}
+            icon={Mic2Icon}
             title={
-              (call as Call).state?.custom?.description ||
-              (call as CallRecording)?.filename?.substring(0, 25) ||
-              "Personal Meeting"
+              (call as CallRecording).filename?.substring(0, 25) || "Recording"
             }
-            isPreviousMeeting={type === "ended"}
-            handleClick={
-              type === "recordings"
-                ? () => router.push((call as CallRecording)?.url)
-                : () => router.push(`${baseUrl}/meeting/${(call as Call).id}`)
+            date={formatDate((call as CallRecording).start_time)}
+            buttonIcon1={PlaySquareIcon}
+            buttonText="Play"
+            handleClick={() =>
+              window.open((call as CallRecording).url, "_blank", "noopener")
             }
-            buttonText={type === "recordings" ? "Play" : "Start"}
-            link={
-              type === "recordings"
-                ? (call as CallRecording).url
-                : `${baseUrl}/meeting/${(call as Call).id}`
-            }
+            link={(call as CallRecording).url}
           />
-        ))
-      ) : (
-        <h1>{noCallsMessage}</h1>
+        ) : (
+          <MeetingCard
+            key={(call as Call).id}
+            icon={type === "ended" ? BookmarkCheckIcon : BookUpIcon}
+            title={
+              (call as Call).state?.custom?.description || "Personal Meeting"
+            }
+            date={formatDate((call as Call).state?.startsAt)}
+            isPreviousMeeting={type === "ended"}
+            buttonText="Start"
+            handleClick={() => router.push(`/meeting/${(call as Call).id}`)}
+            link={getMeetingLink((call as Call).id)}
+          />
+        )
       )}
     </div>
   );

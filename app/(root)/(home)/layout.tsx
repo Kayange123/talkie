@@ -1,4 +1,3 @@
-import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import Sidebar from "@/components/shared/Sidebar";
 import React from "react";
@@ -13,11 +12,10 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
       <Navbar />
       <div className="flex w-full">
         <Sidebar />
-        <section className="flex min-h-screen w-full flex-col p-3">
-          <div className="w-full">{children}</div>
+        <section className="flex min-h-[calc(100vh-73px)] w-full flex-col px-4 pb-10 pt-6 sm:px-8 lg:px-10">
+          <div className="mx-auto w-full max-w-6xl">{children}</div>
         </section>
       </div>
-      <Footer />
     </main>
   );
 };

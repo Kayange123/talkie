@@ -1,16 +1,8 @@
 import { authMiddleware } from "@clerk/nextjs";
 
-export default authMiddleware({
-  // publicRoutes: ["/", "/sign-in(.*)", "/sign-up", "/upcoming", "/previous"],
-});
-
-// const protectedRoutes= createRouteMatcher([
-//   "/",
-//   "/upcoming",
-//   "/previous",
-//   ""
-// ])
+// Every route requires sign-in; Clerk exempts its own sign-in/sign-up pages.
+export default authMiddleware({});
 
 export const config = {
-  matcher: ["/((?!.+.[w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };
