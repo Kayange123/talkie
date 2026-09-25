@@ -21,15 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider
+        afterSignOutUrl="/sign-in"
         appearance={{
           variables: {
-            colorText: "#fff",
+            colorForeground: "#fff",
             colorPrimary: "#0E78F9",
             colorBackground: "#1c1f2e",
-            colorInputBackground: "#252a41",
-            colorInputText: "#fff",
+            colorInput: "#252a41",
+            colorInputForeground: "#fff",
           },
-          layout: {
+          options: {
             logoImageUrl: "/icons/home-logo.svg",
             socialButtonsVariant: "iconButton",
           },
