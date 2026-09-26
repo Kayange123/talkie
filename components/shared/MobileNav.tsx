@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 import { Menu, Video } from "lucide-react";
 import Link from "next/link";
 import SidebarLinks from "./SidebarLinks";
@@ -17,6 +23,7 @@ const MobileNav = () => {
           </button>
         </SheetTrigger>
         <SheetContent className="border-none bg-dark-1 text-white" side="left">
+          <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SheetClose asChild>
             <Link href="/" className="flex items-center gap-3">
               <div className="flex-center size-10 rounded-xl bg-blue-1">

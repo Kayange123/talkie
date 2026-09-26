@@ -69,7 +69,7 @@ const CallList: FC<CallListProps> = ({ type }) => {
           callRecordings.map((call) => call.queryRecordings())
         );
         setRecordings(callData.flatMap((record) => record.recordings));
-      } catch (error) {
+      } catch {
         toast({ title: "Couldn't load recordings, try again later" });
       } finally {
         setIsLoadingRecordings(false);

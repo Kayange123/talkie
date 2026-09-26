@@ -1,6 +1,6 @@
 # Talkie
 
-Video meetings built with Next.js 14 (App Router), [Clerk](https://clerk.com) for authentication and [Stream Video](https://getstream.io/video/) for calls.
+Video meetings built with Next.js 16 (App Router) and React 19, [Clerk](https://clerk.com) for authentication and [Stream Video](https://getstream.io/video/) for calls.
 
 ## Features
 
@@ -21,6 +21,8 @@ Video meetings built with Next.js 14 (App Router), [Clerk](https://clerk.com) fo
    - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` from the Clerk dashboard
    - `NEXT_PUBLIC_STREAM_API_KEY` and `STREAM_SECRET_KEY` from the Stream dashboard
    - `NEXT_PUBLIC_BASE_URL`, used as a fallback when building invite links
+
+   Requires Node.js 20.9 or newer.
 
 3. Start the dev server:
 
