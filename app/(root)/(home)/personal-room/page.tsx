@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { getMeetingLink } from "@/lib/utils";
+import { useOrigin } from "@/hooks/use-browser-values";
 import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { CopyIcon, LoaderCircleIcon, VideoIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const DataRow = ({
   title,
@@ -33,14 +33,11 @@ const PersonalRoom = () => {
   const { toast } = useToast();
   const client = useStreamVideoClient();
   const router = useRouter();
-  const [meetingLink, setMeetingLink] = useState("");
+  const origin = useOrigin();
   const [isStarting, setIsStarting] = useState(false);
 
-  // Built after mount so the link uses the current origin without a
-  // server/client hydration mismatch.
-  useEffect(() => {
-    if (user) setMeetingLink(getMeetingLink(user.id, true));
-  }, [user]);
+  const meetingLink =
+    user && origin ? `${origin}/meeting/${user.id}?personal=true` : "";
 
   const startRoom = async () => {
     if (!client || !user) return;

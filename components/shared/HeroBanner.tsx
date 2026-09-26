@@ -1,21 +1,13 @@
 "use client";
 
+import { useNow } from "@/hooks/use-browser-values";
 import { useGetCalls } from "@/hooks/use-get-calls";
 import { CalendarClockIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const HeroBanner = () => {
-  // Render the clock only after mount so it uses the viewer's timezone
-  // and doesn't mismatch the server-rendered HTML.
-  const [now, setNow] = useState<Date>();
+  const now = useNow();
   const { upcomingCalls, isLoading } = useGetCalls();
-
-  useEffect(() => {
-    setNow(new Date());
-    const timer = setInterval(() => setNow(new Date()), 15_000);
-    return () => clearInterval(timer);
-  }, []);
 
   const nextCall = upcomingCalls[0];
   const nextStartsAt = nextCall?.state.startsAt;

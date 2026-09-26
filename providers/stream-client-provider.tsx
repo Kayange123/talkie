@@ -30,6 +30,9 @@ export const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
       tokenProvider,
     });
 
+    // Syncing with an external system (the Stream connection) is what
+    // effects are for; the client must be created and torn down here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVideoClient(client);
 
     return () => {
