@@ -25,7 +25,7 @@ const MobileNav = () => {
         <SheetContent className="border-none bg-dark-1 text-white" side="left">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SheetClose asChild>
-            <Link href="/" className="flex items-center gap-3">
+            <Link href="/dashboard" className="flex items-center gap-3">
               <div className="flex-center size-10 rounded-xl bg-blue-1">
                 <Video className="size-6" />
               </div>

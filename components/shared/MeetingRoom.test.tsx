@@ -65,8 +65,8 @@ describe("MeetingRoom", () => {
       screen.getByRole("heading", { name: /this meeting has ended/i })
     ).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole("button", { name: /back to home/i }));
-    expect(push).toHaveBeenCalledWith("/");
+    await userEvent.click(screen.getByRole("button", { name: /back to dashboard/i }));
+    expect(push).toHaveBeenCalledWith("/dashboard");
   });
 
   it("lets the host end the call for everyone", async () => {
@@ -75,7 +75,7 @@ describe("MeetingRoom", () => {
     await userEvent.click(endButton()!);
 
     expect(state.endCall).toHaveBeenCalledOnce();
-    expect(push).toHaveBeenCalledWith("/");
+    expect(push).toHaveBeenCalledWith("/dashboard");
   });
 
   it("hides the end button from guests without alerting them", () => {
