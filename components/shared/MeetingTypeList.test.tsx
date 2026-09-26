@@ -87,32 +87,24 @@ describe("MeetingTypeList", () => {
       expect(push).not.toHaveBeenCalled();
     });
 
-    it("rejects a time in the past without creating a call", async () => {
+    it.each([
+      [
+        "a time in the past",
+        () => toLocalInput(new Date(Date.now() - 60 * 60_000)),
+        "Pick a time in the future",
+      ],
+      ["an empty date", () => "", "Pick a date and time"],
+    ])("rejects %s without creating a call", async (_label, value, message) => {
       render(<MeetingTypeList />);
       await openCard(/schedule meeting/i);
 
       fireEvent.change(screen.getByLabelText(/date and time/i), {
-        target: { value: toLocalInput(new Date(Date.now() - 60 * 60_000)) },
+        target: { value: value() },
       });
       await userEvent.click(screen.getByRole("button", { name: /schedule meeting/i }));
 
       expect(toast).toHaveBeenCalledWith(
-        expect.objectContaining({ title: expect.stringMatching(/future/i) })
-      );
-      expect(stream.getOrCreate).not.toHaveBeenCalled();
-    });
-
-    it("rejects an empty date without crashing", async () => {
-      render(<MeetingTypeList />);
-      await openCard(/schedule meeting/i);
-
-      fireEvent.change(screen.getByLabelText(/date and time/i), {
-        target: { value: "" },
-      });
-      await userEvent.click(screen.getByRole("button", { name: /schedule meeting/i }));
-
-      expect(toast).toHaveBeenCalledWith(
-        expect.objectContaining({ title: "Pick a date and time" })
+        expect.objectContaining({ title: message, variant: "destructive" })
       );
       expect(stream.getOrCreate).not.toHaveBeenCalled();
     });
