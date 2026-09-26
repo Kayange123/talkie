@@ -46,3 +46,11 @@ Video meetings built with Next.js 16 (App Router) and React 19, [Clerk](https://
 | `npm run test:watch`| Run tests in watch mode       |
 
 CI runs lint, the type check and the tests on every push and pull request to `main` and `develop`.
+
+## Contributing
+
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to set up, which branch to target and the checks to run. Please report security issues privately, as described in [SECURITY.md](SECURITY.md).
+
+## Licence
+
+[MIT](LICENSE)

@@ -1,7 +1,13 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// "/" is the public landing page; everything else needs a signed-in user.
-const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
+// The landing and legal pages are public; everything else needs sign-in.
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/terms",
+  "/privacy",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+]);
 
 // clerkMiddleware leaves routes public by default, so protect everything
 // except the public routes explicitly.
