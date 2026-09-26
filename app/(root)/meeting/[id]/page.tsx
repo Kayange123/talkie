@@ -8,17 +8,13 @@ import { useGetCallById } from "@/hooks/use-getcall-byid";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
 import { VideoOffIcon } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
-interface MeetingPageProps {
-  params: {
-    id: string;
-  };
-}
-
-const MeetingPage = ({ params }: MeetingPageProps) => {
+const MeetingPage = () => {
+  const { id } = useParams<{ id: string }>();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
-  const { call, isCallLoading } = useGetCallById(params.id);
+  const { call, isCallLoading } = useGetCallById(id);
 
   if (isCallLoading) return <Loader fullScreen />;
 

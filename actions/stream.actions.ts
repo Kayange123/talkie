@@ -14,8 +14,12 @@ export const tokenProvider = async () => {
   if (!apiSecret) throw new Error("No API secret provided");
 
   const streamClient = new StreamClient(apiKey, apiSecret);
-  const exp = Math.round(new Date().getTime() / 1000) + 60 * 60;
-  const issued = Math.floor(Date.now() / 1000) - 60;
+  const now = Math.floor(Date.now() / 1000);
 
-  return streamClient.createToken(user?.id, exp, issued);
+  return streamClient.generateUserToken({
+    user_id: user.id,
+    exp: now + 60 * 60,
+    // Backdate slightly to tolerate clock skew between servers.
+    iat: now - 60,
+  });
 };
