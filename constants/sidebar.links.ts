@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 
 export const sidebarLinks = [
-  { iconUrl: Home, label: "Home", href: "/" },
+  { iconUrl: Home, label: "Home", href: "/dashboard" },
   {
     iconUrl: BookUpIcon,
     label: "Upcoming",
