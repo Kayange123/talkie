@@ -9,6 +9,8 @@ Video meetings built with Next.js 16 (App Router) and React 19, [Clerk](https://
 - Upcoming and previous meetings, plus call recordings
 - Device check before joining, and grid or speaker layouts in the call
 
+`/` is a public landing page. The app itself lives at `/dashboard`, and every route other than `/`, `/sign-in` and `/sign-up` requires signing in.
+
 ## Getting started
 
 1. Install dependencies:
