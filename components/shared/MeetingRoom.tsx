@@ -90,8 +90,8 @@ const MeetingRoom = () => {
           <PhoneOffIcon className="size-8 text-sky-1" />
         </div>
         <h1 className="text-2xl font-bold">This meeting has ended</h1>
-        <Button className="mt-2 bg-blue-1" onClick={() => router.push("/")}>
-          Back to home
+        <Button className="mt-2 bg-blue-1" onClick={() => router.push("/dashboard")}>
+          Back to dashboard
         </Button>
       </section>
     );
@@ -113,7 +113,7 @@ const MeetingRoom = () => {
       </div>
 
       <div className="fixed bottom-0 flex w-full flex-wrap items-center justify-center gap-3 bg-dark-2/80 px-2 py-3 backdrop-blur">
-        <CallControls onLeave={() => router.push("/")} />
+        <CallControls onLeave={() => router.push("/dashboard")} />
 
         <DropdownMenu>
           <DropdownMenuTrigger className={controlClass} title="Change layout">
@@ -147,7 +147,7 @@ const MeetingRoom = () => {
           <Users2Icon size={20} />
         </button>
 
-        {!isPersonalRoom && <EndCallButton onEnded={() => router.push("/")} />}
+        {!isPersonalRoom && <EndCallButton onEnded={() => router.push("/dashboard")} />}
       </div>
     </section>
   );

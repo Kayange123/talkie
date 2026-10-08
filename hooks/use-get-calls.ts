@@ -52,7 +52,10 @@ export const useGetCalls = () => {
       (startsAt && new Date(startsAt) < now) || !!endedAt
   );
   const upcomingCalls = calls
-    .filter(({ state: { startsAt } }) => startsAt && new Date(startsAt) > now)
+    .filter(
+      ({ state: { startsAt, endedAt } }) =>
+        startsAt && new Date(startsAt) > now && !endedAt
+    )
     // Query is newest-first; show the soonest upcoming meeting first.
     .reverse();
 

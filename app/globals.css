@@ -28,6 +28,12 @@
   * {
     @apply border-border;
   }
+
+  /* Raleway defaults to old-style figures, which look off in clocks,
+     dates and counts. */
+  body {
+    font-variant-numeric: lining-nums;
+  }
 }
 
 /* ======== stream css overrides ======== */

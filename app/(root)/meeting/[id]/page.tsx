@@ -30,7 +30,7 @@ const MeetingPage = () => {
           link with whoever invited you.
         </p>
         <Button asChild className="mt-2 bg-blue-1">
-          <Link href="/">Back to home</Link>
+          <Link href="/dashboard">Back to dashboard</Link>
         </Button>
       </main>
     );
