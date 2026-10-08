@@ -115,6 +115,41 @@
   position: relative;
 }
 
+/* Meeting stage: full-width grid, rounder tiles, and our own speaking glow
+   (ParticipantTileUI) instead of the SDK's outline. The SDK stylesheet loads
+   after this file, so these selectors are one class more specific. */
+.talkie-call .talkie-stage {
+  --str-video__border-radius-sm: 20px;
+}
+.talkie-call .talkie-stage .str-video__paginated-grid-layout .str-video__paginated-grid-layout__group {
+  max-width: none;
+  gap: 16px;
+  padding-inline: 0;
+}
+.talkie-call .talkie-stage .str-video__participant-view {
+  overflow: hidden;
+  background: rgb(var(--c-dark-3));
+  /* Lets tile contents size to the tile (cqh units, @container below). */
+  container-type: size;
+}
+
+/* Short tiles: phones, or many people in a call. */
+@container (max-height: 180px) {
+  .tile-name {
+    bottom: 6px;
+    left: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+  .tile-corner {
+    top: 6px;
+    padding: 4px 6px;
+  }
+}
+.talkie-call .talkie-stage .str-video__participant-view--speaking {
+  outline: none;
+}
+
 .glassmorphism {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(4px);

@@ -9,6 +9,7 @@ import { LoaderCircleIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
+import BlurToggle from "../meeting/BlurToggle";
 
 interface MeetingSetupProps {
   onSetupComplete: () => void;
@@ -75,6 +76,7 @@ const MeetingSetup = ({ onSetupComplete }: MeetingSetupProps) => {
           Join with mic and camera off
         </label>
         <DeviceSettings />
+        <BlurToggle />
       </div>
 
       <Button

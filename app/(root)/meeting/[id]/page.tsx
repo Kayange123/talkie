@@ -5,7 +5,11 @@ import MeetingSetup from "@/components/shared/MeetingSetup";
 import MeetingRoom from "@/components/shared/MeetingRoom";
 import { Button } from "@/components/ui/button";
 import { useGetCallById } from "@/hooks/use-getcall-byid";
-import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
+import {
+  BackgroundFiltersProvider,
+  StreamCall,
+  StreamTheme,
+} from "@stream-io/video-react-sdk";
 import { VideoOffIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -39,12 +43,18 @@ const MeetingPage = () => {
   return (
     <main className="h-screen w-full">
       <StreamCall call={call}>
-        <StreamTheme>
-          {!isSetupComplete ? (
-            <MeetingSetup onSetupComplete={() => setIsSetupComplete(true)} />
-          ) : (
-            <MeetingRoom />
-          )}
+        <StreamTheme className="talkie-call">
+          {/* Blur model files are self-hosted; see scripts/copy-filter-assets.mjs. */}
+          <BackgroundFiltersProvider
+            basePath="/vendor/video-filters/mediapipe"
+            backgroundBlurLevel="medium"
+          >
+            {!isSetupComplete ? (
+              <MeetingSetup onSetupComplete={() => setIsSetupComplete(true)} />
+            ) : (
+              <MeetingRoom />
+            )}
+          </BackgroundFiltersProvider>
         </StreamTheme>
       </StreamCall>
     </main>
