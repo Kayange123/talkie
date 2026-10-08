@@ -35,3 +35,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# background blur assets, copied from node_modules on install
+/public/vendor/

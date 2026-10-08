@@ -59,7 +59,7 @@ const PersonalRoom = () => {
   const displayName = user?.firstName || user?.username || "Your";
 
   return (
-    <section className="flex size-full flex-col gap-8 text-white">
+    <section className="flex size-full flex-col gap-8 text-fg">
       <div>
         <h1 className="text-3xl font-bold">Personal Room</h1>
         <p className="mt-1 text-muted-foreground">
@@ -67,7 +67,7 @@ const PersonalRoom = () => {
         </p>
       </div>
 
-      <div className="flex w-full flex-col gap-4 rounded-[14px] bg-dark-1 p-6 ring-1 ring-white/5 xl:max-w-[900px]">
+      <div className="flex w-full flex-col gap-4 rounded-[14px] bg-dark-1 p-6 ring-1 ring-fg/5 xl:max-w-[900px]">
         <DataRow title="Topic" description={`${displayName}'s meeting room`} />
         <DataRow title="Meeting ID" description={user?.id ?? ""} />
         <DataRow title="Invite link" description={meetingLink} />
@@ -87,7 +87,7 @@ const PersonalRoom = () => {
           Start meeting
         </Button>
         <Button
-          className="rounded-lg bg-dark-3 px-6"
+          className="rounded-lg bg-dark-3 px-6 text-fg"
           disabled={!meetingLink}
           onClick={() => {
             navigator.clipboard.writeText(meetingLink);

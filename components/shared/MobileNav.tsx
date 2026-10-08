@@ -19,10 +19,10 @@ const MobileNav = () => {
       <Sheet>
         <SheetTrigger asChild>
           <button type="button" aria-label="Open menu" className="flex-center">
-            <Menu className="size-8 text-white" />
+            <Menu className="size-8 text-fg" />
           </button>
         </SheetTrigger>
-        <SheetContent className="border-none bg-dark-1 text-white" side="left">
+        <SheetContent className="border-none bg-dark-1 text-fg" side="left">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SheetClose asChild>
             <Link href="/dashboard" className="flex items-center gap-3">

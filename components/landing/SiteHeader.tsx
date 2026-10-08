@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { appConfig } from "@/config/app.config";
 import Link from "next/link";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 import Logo from "./Logo";
 
 const SiteHeader = () => {
@@ -10,6 +11,7 @@ const SiteHeader = () => {
         <Logo />
       </Link>
       <nav aria-label="Account" className="flex items-center gap-2 sm:gap-3">
+        <ThemeToggle />
         <Button asChild className="bg-transparent text-sky-2 hover:bg-dark-3">
           <Link href="/sign-in">Sign in</Link>
         </Button>

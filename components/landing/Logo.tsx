@@ -6,7 +6,7 @@ const Logo = () => (
     <span className="flex-center size-9 rounded-xl bg-blue-1">
       <Video className="size-5 text-white" />
     </span>
-    <span className="text-xl font-extrabold tracking-tight text-white">
+    <span className="text-xl font-extrabold tracking-tight text-fg">
       {appConfig.title}
     </span>
   </span>

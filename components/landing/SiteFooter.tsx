@@ -36,7 +36,7 @@ const isExternal = (href: string) => href.startsWith("http");
 
 const SiteFooter = () => {
   return (
-    <footer className="border-t border-white/[0.06]">
+    <footer className="border-t border-fg/[0.06]">
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-10 px-5 py-14 sm:px-8 md:grid-cols-[1.3fr_repeat(3,1fr)] md:gap-8">
         <div className="col-span-2 md:col-span-1">
           <Logo />
@@ -48,21 +48,21 @@ const SiteFooter = () => {
 
         {groups.map(({ title, links }) => (
           <nav key={title} aria-label={title}>
-            <h2 className="text-sm font-bold text-white">{title}</h2>
+            <h2 className="text-sm font-bold text-fg">{title}</h2>
             <ul className="mt-4 flex flex-col gap-3">
               {links.map(({ label, href }) => (
                 <li key={label}>
                   {isExternal(href) ? (
                     <a
                       href={href}
-                      className="text-sky-1/70 transition-colors hover:text-white"
+                      className="text-sky-1/70 transition-colors hover:text-fg"
                     >
                       {label}
                     </a>
                   ) : (
                     <Link
                       href={href}
-                      className="text-sky-1/70 transition-colors hover:text-white"
+                      className="text-sky-1/70 transition-colors hover:text-fg"
                     >
                       {label}
                     </Link>
@@ -74,14 +74,14 @@ const SiteFooter = () => {
         ))}
       </div>
 
-      <div className="border-t border-white/[0.06]">
+      <div className="border-t border-fg/[0.06]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-6 text-sm text-sky-1/55 sm:px-8">
           <p>
             &copy; {new Date().getFullYear()} {appConfig.title}
           </p>
           <p>
             Released under the{" "}
-            <a href={siteLinks.license} className="underline-offset-4 hover:text-white hover:underline">
+            <a href={siteLinks.license} className="underline-offset-4 hover:text-fg hover:underline">
               MIT licence
             </a>
             .

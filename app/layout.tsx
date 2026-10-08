@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { appConfig } from "@/config/app.config";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
+import { themeInitScript } from "@/lib/theme";
+import ThemedClerkProvider from "@/providers/themed-clerk-provider";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 
 const raleway = Raleway({ subsets: ["latin"] });
@@ -19,28 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <ClerkProvider
-        afterSignOutUrl="/"
-        appearance={{
-          variables: {
-            colorForeground: "#fff",
-            colorPrimary: "#0E78F9",
-            colorBackground: "#1c1f2e",
-            colorInput: "#252a41",
-            colorInputForeground: "#fff",
-          },
-          options: {
-            logoImageUrl: "/icons/home-logo.svg",
-            socialButtonsVariant: "iconButton",
-          },
-        }}
-      >
-        <body className={`${raleway.className} bg-dark-2 text-white antialiased`}>
+    // themeInitScript sets data-theme on <html> before hydration.
+    <html lang="en" suppressHydrationWarning>
+      <ThemedClerkProvider>
+        <body className={`${raleway.className} bg-dark-2 text-fg antialiased`}>
+          <Script id="theme-init" strategy="beforeInteractive">
+            {themeInitScript}
+          </Script>
           {children}
           <Toaster />
         </body>
-      </ClerkProvider>
+      </ThemedClerkProvider>
     </html>
   );
 }

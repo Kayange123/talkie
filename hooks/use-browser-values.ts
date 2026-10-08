@@ -10,23 +10,35 @@ export const useOrigin = () =>
     () => ""
   );
 
-const TICK_MS = 15_000;
-
-const subscribeToTicks = (onTick: () => void) => {
-  const timer = setInterval(onTick, TICK_MS);
+const subscribersFor = (intervalMs: number) => (onTick: () => void) => {
+  const timer = setInterval(onTick, intervalMs);
   return () => clearInterval(timer);
 };
 
+const tickSubscribers = new Map<number, (onTick: () => void) => () => void>();
+const subscribeEvery = (intervalMs: number) => {
+  // useSyncExternalStore resubscribes when subscribe changes identity.
+  let subscribe = tickSubscribers.get(intervalMs);
+  if (!subscribe) {
+    subscribe = subscribersFor(intervalMs);
+    tickSubscribers.set(intervalMs, subscribe);
+  }
+  return subscribe;
+};
+
 /**
- * Current time, refreshed every 15s. Undefined during SSR and hydration so
- * the clock renders in the viewer's timezone without a mismatch.
+ * Current time, refreshed every `intervalMs`. Undefined during SSR and
+ * hydration so times render in the viewer's timezone without a mismatch.
  */
-export const useNow = () => {
+export const useTicker = (intervalMs: number) => {
   // Snapshots must be stable between reads, so quantize to the tick.
   const tick = useSyncExternalStore(
-    subscribeToTicks,
-    () => Math.floor(Date.now() / TICK_MS),
+    subscribeEvery(intervalMs),
+    () => Math.floor(Date.now() / intervalMs),
     () => null
   );
   return tick === null ? undefined : new Date();
 };
+
+/** Current time, refreshed every 15s, for clocks shown to the minute. */
+export const useNow = () => useTicker(15_000);
