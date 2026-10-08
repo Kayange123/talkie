@@ -13,8 +13,10 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("@stream-io/video-react-sdk", async () => (await import("@/test/stream-sdk-mock")).sdkMock);
 vi.mock("@/components/ui/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
-// The theme picker is covered by its own tests.
+// The theme picker and the layouts are covered by their own tests.
 vi.mock("./ThemeToggle", () => ({ default: () => null }));
+vi.mock("../meeting/TalkieGrid", () => ({ default: () => <div data-testid="grid-layout" /> }));
+vi.mock("../meeting/SpeakerStage", () => ({ default: () => <div data-testid="speaker-layout" /> }));
 
 const endButton = () => screen.queryByRole("button", { name: /end for everyone/i });
 
