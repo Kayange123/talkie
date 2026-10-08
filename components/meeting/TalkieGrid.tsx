@@ -2,16 +2,15 @@
 
 import { useElementSize } from "@/hooks/use-element-size";
 import { fitGrid } from "@/lib/grid-fit";
+import { useLayoutWiring } from "@/hooks/use-layout-wiring";
 import {
   ParticipantView,
   ParticipantsAudio,
-  defaultSortPreset,
   paginatedLayoutSortPreset,
-  useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ParticipantTileUI, TilePlaceholder } from "./ParticipantTile";
 
 export const PAGE_SIZE = 12;
@@ -29,7 +28,6 @@ const chunk = <T,>(items: T[], size: number) =>
  * stacked or overflowing with few people.
  */
 const TalkieGrid = () => {
-  const call = useCall();
   const { useParticipants, useRemoteParticipants } = useCallStateHooks();
   const participants = useParticipants();
   const remoteParticipants = useRemoteParticipants();
@@ -37,26 +35,15 @@ const TalkieGrid = () => {
   const size = useElementSize(element);
   const [page, setPage] = useState(0);
 
-  // Same ordering the SDK's grid uses: screen share, speaking, video first.
-  useEffect(() => {
-    if (!call) return;
-    call.setSortParticipantsBy(paginatedLayoutSortPreset);
-    return () => call.setSortParticipantsBy(defaultSortPreset);
-  }, [call]);
-
-  // Lets the SDK pause video for tiles that aren't visible.
-  useEffect(() => {
-    if (!call || !element) return;
-    const cleanup = call.setViewport(element);
-    return () => cleanup?.();
-  }, [call, element]);
+  // Same ordering as the SDK's grid: screen share, speaking, video first.
+  useLayoutWiring(paginatedLayoutSortPreset, element);
 
   const pages = useMemo(() => chunk(participants, PAGE_SIZE), [participants]);
   const pageCount = pages.length;
   // Clamp if people left and the page we were on no longer exists.
   const current = Math.min(page, Math.max(0, pageCount - 1));
   const group = pages[current] ?? [];
-  const fit = size ? fitGrid(group.length, size.width, size.height, GAP) : null;
+  const fit = size ? fitGrid({ count: group.length, ...size, gap: GAP }) : null;
 
   return (
     <div className="relative size-full">
