@@ -45,7 +45,7 @@ const Landing = () => {
             <Button
               asChild
               size="lg"
-              className="rounded-xl bg-dark-3 px-7 text-base font-semibold"
+              className="rounded-xl bg-dark-3 px-7 text-base font-semibold text-fg"
             >
               <Link href="/sign-in">Sign in</Link>
             </Button>
@@ -57,7 +57,7 @@ const Landing = () => {
 
       <section
         aria-labelledby="how-it-works"
-        className="border-t border-white/[0.06] bg-dark-1/40"
+        className="border-t border-fg/[0.06] bg-dark-1/40"
       >
         <div className="mx-auto grid max-w-6xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[1fr_1.4fr] lg:gap-16 lg:py-28">
           <div className="lg:sticky lg:top-12 lg:self-start">
@@ -111,7 +111,7 @@ const Landing = () => {
           <Button asChild size="lg" className="rounded-xl bg-blue-1 px-7 text-base font-semibold">
             <Link href="/sign-up">Create an account</Link>
           </Button>
-          <Button asChild size="lg" className="rounded-xl bg-dark-3 px-7 text-base font-semibold">
+          <Button asChild size="lg" className="rounded-xl bg-dark-3 px-7 text-base font-semibold text-fg">
             <Link href="/sign-in">Sign in</Link>
           </Button>
         </div>

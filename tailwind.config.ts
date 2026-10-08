@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 const config = {
-  darkMode: ["class"],
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -49,19 +49,25 @@ const config = {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
+        // Theme-aware (see app/globals.css): these flip between dark and
+        // light. The names predate theming; dark-* are surfaces, sky-* text.
         dark: {
-          1: "#1C1F2E",
-          2: "#161925",
-          3: "#252A41",
-          4: "#1E2757",
+          1: "rgb(var(--c-dark-1) / <alpha-value>)",
+          2: "rgb(var(--c-dark-2) / <alpha-value>)",
+          3: "rgb(var(--c-dark-3) / <alpha-value>)",
+          4: "rgb(var(--c-dark-4) / <alpha-value>)",
         },
+        fg: "rgb(var(--c-fg) / <alpha-value>)",
+        "warn-text": "rgb(var(--c-warn-text) / <alpha-value>)",
+        "danger-text": "rgb(var(--c-danger-text) / <alpha-value>)",
+        shade: "rgb(var(--c-shadow) / <alpha-value>)",
         blue: {
           1: "#0E78F9",
         },
         sky: {
-          1: "#C9DDFF",
-          2: "#ECF0FF",
-          3: "#F5FCFF",
+          1: "rgb(var(--c-sky-1) / <alpha-value>)",
+          2: "rgb(var(--c-sky-2) / <alpha-value>)",
+          3: "rgb(var(--c-sky-3) / <alpha-value>)",
         },
         orange: {
           1: "#FF742E",
@@ -86,6 +92,22 @@ const config = {
           from: { opacity: "0", transform: "translateY(4px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        // A reaction emoji rising off a participant's tile.
+        "float-up": {
+          "0%": { opacity: "0", transform: "translateY(0) scale(0.6)" },
+          "12%": { opacity: "1", transform: "translateY(-12px) scale(1.15)" },
+          "100%": { opacity: "0", transform: "translateY(-180px) scale(1)" },
+        },
+        // The reduced-motion version: appear, hold, fade.
+        "fade-hold": {
+          "0%, 70%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        // A soft pulse around whoever is speaking. Inset: tiles clip their overflow.
+        "speaking-glow": {
+          "0%, 100%": { boxShadow: "inset 0 0 0 3px #0E78F9, inset 0 0 18px rgba(14,120,249,0.35)" },
+          "50%": { boxShadow: "inset 0 0 0 3px #0E78F9, inset 0 0 34px rgba(14,120,249,0.6)" },
+        },
         // A participant tile popping into the call grid.
         join: {
           from: { opacity: "0", transform: "scale(0.9)" },
@@ -97,6 +119,9 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         join: "join 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both",
+        "float-up": "float-up 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards",
+        "fade-hold": "fade-hold 2.6s ease-out forwards",
+        "speaking-glow": "speaking-glow 1.6s ease-in-out infinite",
       },
       backgroundImage: {
         hero: "url('/images/hero-background.png')",

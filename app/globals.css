@@ -3,8 +3,24 @@
 @tailwind utilities;
 
 @layer base {
-  /* The app is dark-only, so tokens live on :root (no .dark toggle). */
-  :root {
+  /* Theme tokens. Brand colours (blue, orange, purple, yellow) stay fixed;
+     surfaces and text flip. Channels are space-separated RGB so Tailwind
+     opacity modifiers (bg-dark-2/80) keep working. Set on <html> by
+     themeInitScript before paint; dark is the fallback. */
+  :root,
+  :root[data-theme="dark"] {
+    --c-dark-1: 28 31 46; /* surface: cards, panels, bars */
+    --c-dark-2: 22 25 37; /* page background */
+    --c-dark-3: 37 42 65; /* raised: chips, inputs, tiles */
+    --c-dark-4: 30 39 87; /* deep accent surface */
+    --c-sky-1: 201 221 255; /* secondary text */
+    --c-sky-2: 236 240 255; /* soft text */
+    --c-sky-3: 245 252 255;
+    --c-fg: 255 255 255; /* primary text */
+    --c-warn-text: 249 169 14; /* yellow text, e.g. raised hands */
+    --c-danger-text: 255 138 138; /* red text, e.g. recording */
+    --c-shadow: 5 8 20;
+
     --background: 229 26% 12%;
     --foreground: 0 0% 100%;
     --popover: 230 24% 15%;
@@ -25,6 +41,34 @@
     color-scheme: dark;
   }
 
+  :root[data-theme="light"] {
+    --c-dark-1: 255 255 255;
+    --c-dark-2: 238 241 248;
+    --c-dark-3: 228 232 242;
+    --c-dark-4: 220 226 239;
+    --c-sky-1: 74 85 120;
+    --c-sky-2: 42 49 80;
+    --c-sky-3: 22 25 37;
+    --c-fg: 22 25 37;
+    --c-warn-text: 138 88 0;
+    --c-danger-text: 180 35 35;
+    --c-shadow: 22 25 37;
+
+    --background: 225 40% 95%;
+    --foreground: 229 26% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 229 26% 12%;
+    --secondary: 222 32% 92%;
+    --secondary-foreground: 229 26% 12%;
+    --muted: 222 32% 92%;
+    --muted-foreground: 225 24% 38%;
+    --accent: 222 32% 90%;
+    --accent-foreground: 229 26% 12%;
+    --border: 225 25% 86%;
+    --input: 225 25% 84%;
+    color-scheme: light;
+  }
+
   * {
     @apply border-border;
   }
@@ -36,38 +80,74 @@
   }
 }
 
-/* ======== stream css overrides ======== */
+/* ======== Stream video theming ======== */
+/* Point the SDK's colour variables at our theme tokens so its own UI
+   (device menus, participant list, stats) follows light and dark. */
+.str-video {
+  --str-video__primary-color: #0e78f9;
+  --str-video__secondary-color: #5aa2ff;
+  --str-video__brand-color1: #0e78f9;
+  --str-video__background-color0: rgb(var(--c-dark-2));
+  --str-video__background-color1: rgb(var(--c-dark-1));
+  --str-video__background-color2: rgb(var(--c-dark-3));
+  --str-video__background-color4: rgb(var(--c-dark-2));
+  --str-video__background-color5: rgb(var(--c-dark-3));
+  --str-video__base-color1: rgb(var(--c-fg));
+  --str-video__base-color2: rgb(var(--c-sky-1));
+  --str-video__base-color3: rgb(var(--c-sky-1) / 0.5);
+  --str-video__base-color6: rgb(var(--c-dark-3));
+  --str-video__text-color1: rgb(var(--c-fg));
+  --str-video__text-color2: rgb(var(--c-sky-1));
+  --str-video__text-color3: rgb(var(--c-sky-1) / 0.8);
+  --str-video__text-color4: rgb(var(--c-fg));
+  --str-video__overlay-color: rgb(var(--c-dark-1) / 0.8);
+  --str-video__button-default-base: rgb(var(--c-dark-3));
+  --str-video__button-default-active: rgb(var(--c-dark-3));
+  --str-video__button-default-hover: rgb(var(--c-dark-4));
+  --str-video__button-primary-base: rgb(var(--c-dark-3));
+  --str-video__button-primary-active: #0e78f9;
+  --str-video__button-primary-hover: rgb(var(--c-dark-4));
+  font-family: inherit;
+}
+
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
 }
 
-.str-video__speaker-layout__wrapper {
-  max-height: 700px;
+/* Meeting stage: full-width grid, rounder tiles, and our own speaking glow
+   (ParticipantTileUI) instead of the SDK's outline. The SDK stylesheet loads
+   after this file, so these selectors are one class more specific. */
+.talkie-call .talkie-stage {
+  --str-video__border-radius-sm: 20px;
+}
+.talkie-call .talkie-stage .str-video__paginated-grid-layout .str-video__paginated-grid-layout__group {
+  max-width: none;
+  gap: 16px;
+  padding-inline: 0;
+}
+.talkie-call .talkie-stage .str-video__participant-view {
+  overflow: hidden;
+  background: rgb(var(--c-dark-3));
+  /* Lets tile contents size to the tile (cqh units, @container below). */
+  container-type: size;
 }
 
-.str-video__participant-details {
-  color: white;
+/* Short tiles: phones, or many people in a call. */
+@container (max-height: 180px) {
+  .tile-name {
+    bottom: 6px;
+    left: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+  .tile-corner {
+    top: 6px;
+    padding: 4px 6px;
+  }
 }
-
-.str-video__menu-container {
-  color: white;
-}
-
-.str-video__notification {
-  color: white;
-}
-
-.str-video__participant-list {
-  background-color: #1c1f2e;
-  padding: 10px;
-  border-radius: 10px;
-  color: white;
-  height: 100%;
-}
-
-.str-video__call-controls__button {
-  height: 40px;
+.talkie-call .talkie-stage .str-video__participant-view--speaking {
+  outline: none;
 }
 
 .glassmorphism {
@@ -84,33 +164,34 @@
 /* ==== clerk class override ===== */
 
 .cl-userButtonPopoverActionButtonIcon {
-  color: white;
+  color: rgb(var(--c-fg));
 }
 
-.cl-providerIcon__github {
+/* GitHub's mark is black; invert it only on dark backgrounds. */
+:root:not([data-theme="light"]) .cl-providerIcon__github {
   filter: invert(1);
 }
 .cl-logoBox {
   height: 40px;
 }
 .cl-dividerLine {
-  background: #252a41;
+  background: rgb(var(--c-dark-3));
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid #565761;
+  border: 3px solid rgb(var(--c-sky-1) / 0.35);
 }
 
 .cl-userButtonPopoverActionButton {
-  color: white;
+  color: rgb(var(--c-fg));
 }
 
 /* =============================== */
 
 @layer components {
   .input-field {
-    @apply w-full rounded-lg border border-input bg-dark-3 px-4 py-3 text-base text-white placeholder:text-muted-foreground transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40;
+    @apply w-full rounded-lg border border-input bg-dark-3 px-4 py-3 text-base text-fg placeholder:text-muted-foreground transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40;
   }
 }
 

@@ -25,7 +25,7 @@ const SidebarLinks = ({ wrap = (link) => link, compact = true }: SidebarLinksPro
                 title={label}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex items-center justify-start gap-4 rounded-lg p-3 text-sky-2 transition-colors hover:bg-dark-3 hover:text-white",
+                  "flex items-center justify-start gap-4 rounded-lg p-3 text-sky-2 transition-colors hover:bg-dark-3 hover:text-fg",
                   { "bg-blue-1 text-white hover:bg-blue-1": isActive }
                 )}
               >

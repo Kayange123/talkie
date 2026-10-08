@@ -16,6 +16,7 @@ vi.mock("@stream-io/video-react-sdk", () => ({
   useCall: () => call,
   VideoPreview: () => <div data-testid="preview" />,
   DeviceSettings: () => null,
+  useBackgroundFilters: () => ({ isSupported: false }),
 }));
 
 const joinButton = () => screen.getByRole("button", { name: /join/i });

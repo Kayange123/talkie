@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { call, resetStream, stream } from "@/test/stream-sdk-mock";
 import MeetingRoom from "./MeetingRoom";
 
 const push = vi.fn();
@@ -10,55 +11,28 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
   useSearchParams: () => searchParams,
 }));
+vi.mock("@stream-io/video-react-sdk", async () => (await import("@/test/stream-sdk-mock")).sdkMock);
+vi.mock("@/components/ui/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
+// The theme picker is covered by its own tests.
+vi.mock("./ThemeToggle", () => ({ default: () => null }));
 
-const state = vi.hoisted(() => ({
-  callingState: "joined",
-  localUserId: "host",
-  createdById: "host",
-  endCall: vi.fn(),
-}));
-
-vi.mock("@stream-io/video-react-sdk", () => ({
-  CallingState: { JOINED: "joined", LEFT: "left", JOINING: "joining" },
-  useCallStateHooks: () => ({
-    useCallCallingState: () => state.callingState,
-    useLocalParticipant: () => ({ userId: state.localUserId }),
-  }),
-  useCall: () => ({
-    state: { createdBy: { id: state.createdById } },
-    endCall: state.endCall,
-  }),
-  // The SDK's UI components need a live call; stub them out.
-  CallControls: () => <div data-testid="call-controls" />,
-  CallParticipantsList: () => <div data-testid="participants" />,
-  CallStatsButton: () => null,
-  PaginatedGridLayout: () => <div data-testid="grid-layout" />,
-  SpeakerLayout: () => <div data-testid="speaker-layout" />,
-}));
-
-const endButton = () =>
-  screen.queryByRole("button", { name: /end for everyone/i });
+const endButton = () => screen.queryByRole("button", { name: /end for everyone/i });
 
 describe("MeetingRoom", () => {
   beforeEach(() => {
+    resetStream();
     push.mockReset();
-    state.endCall.mockReset().mockResolvedValue(undefined);
     searchParams = new URLSearchParams();
-    Object.assign(state, {
-      callingState: "joined",
-      localUserId: "host",
-      createdById: "host",
-    });
   });
 
   it("shows a loader while joining", () => {
-    state.callingState = "joining";
+    stream.callingState = "joining";
     render(<MeetingRoom />);
     expect(screen.getByRole("status", { name: /loading/i })).toBeInTheDocument();
   });
 
   it("shows the ended screen when the call is left, e.g. the host ended it", async () => {
-    state.callingState = "left";
+    stream.callingState = "left";
     render(<MeetingRoom />);
 
     expect(
@@ -74,13 +48,13 @@ describe("MeetingRoom", () => {
 
     await userEvent.click(endButton()!);
 
-    expect(state.endCall).toHaveBeenCalledOnce();
+    expect(call.endCall).toHaveBeenCalledOnce();
     expect(push).toHaveBeenCalledWith("/dashboard");
   });
 
   it("hides the end button from guests without alerting them", () => {
     const alert = vi.spyOn(window, "alert").mockImplementation(() => {});
-    state.localUserId = "guest";
+    stream.localUserId = "guest";
 
     render(<MeetingRoom />);
 
@@ -94,13 +68,45 @@ describe("MeetingRoom", () => {
     expect(endButton()).not.toBeInTheDocument();
   });
 
-  it("toggles the participants panel", async () => {
+  it("leaves the call and returns to the dashboard", async () => {
     render(<MeetingRoom />);
-    const toggle = screen.getByRole("button", { name: /participants/i });
+
+    await userEvent.click(screen.getByRole("button", { name: /^leave$/i }));
+
+    expect(call.leave).toHaveBeenCalledOnce();
+    expect(push).toHaveBeenCalledWith("/dashboard");
+  });
+
+  it("toggles the people panel", async () => {
+    render(<MeetingRoom />);
+    const toggle = screen.getByRole("button", { name: /^people/i });
 
     expect(screen.queryByTestId("participants")).not.toBeInTheDocument();
     await userEvent.click(toggle);
     expect(screen.getByTestId("participants")).toBeInTheDocument();
     expect(toggle).toHaveAttribute("aria-pressed", "true");
+  });
+
+  describe("layout", () => {
+    it("uses the grid by default", () => {
+      render(<MeetingRoom />);
+      expect(screen.getByTestId("grid-layout")).toBeInTheDocument();
+    });
+
+    it("switches to speaker view while someone shares their screen", () => {
+      stream.someoneSharing = true;
+      render(<MeetingRoom />);
+      expect(screen.getByTestId("speaker-layout")).toBeInTheDocument();
+    });
+
+    it("keeps the grid during a screen share when grid is chosen", async () => {
+      stream.someoneSharing = true;
+      render(<MeetingRoom />);
+
+      await userEvent.click(screen.getByRole("button", { name: /more/i }));
+      await userEvent.click(screen.getByRole("menuitemradio", { name: /grid/i }));
+
+      expect(screen.getByTestId("grid-layout")).toBeInTheDocument();
+    });
   });
 });

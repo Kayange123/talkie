@@ -9,6 +9,7 @@ import { LoaderCircleIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
+import BlurToggle from "../meeting/BlurToggle";
 
 interface MeetingSetupProps {
   onSetupComplete: () => void;
@@ -52,7 +53,7 @@ const MeetingSetup = ({ onSetupComplete }: MeetingSetupProps) => {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-6 px-4 py-10 text-white">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-6 px-4 py-10 text-fg">
       <div className="text-center">
         <h1 className="text-2xl font-bold sm:text-3xl">Ready to join?</h1>
         <p className="mt-1 text-muted-foreground">
@@ -60,7 +61,7 @@ const MeetingSetup = ({ onSetupComplete }: MeetingSetupProps) => {
         </p>
       </div>
 
-      <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-dark-1 shadow-2xl ring-1 ring-white/5">
+      <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-dark-1 shadow-2xl ring-1 ring-fg/5">
         <VideoPreview />
       </div>
 
@@ -75,6 +76,7 @@ const MeetingSetup = ({ onSetupComplete }: MeetingSetupProps) => {
           Join with mic and camera off
         </label>
         <DeviceSettings />
+        <BlurToggle />
       </div>
 
       <Button
