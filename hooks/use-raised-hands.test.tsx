@@ -97,6 +97,23 @@ describe("useRaisedHands", () => {
     expect(result.current.isMyHandRaised).toBe(false);
   });
 
+  it("ignores a participant lowering someone else's hand", () => {
+    const { result } = setup();
+    act(() => call.emit("custom", handEvent("joel", "Joel", true)));
+
+    act(() => call.emit("custom", handEvent("priya", "Priya", false, "joel")));
+
+    expect(result.current.isRaised("joel")).toBe(true);
+  });
+
+  it("ignores anyone raising a hand on someone else's behalf", () => {
+    const { result } = setup();
+
+    act(() => call.emit("custom", handEvent("host", "Host", true, "joel")));
+
+    expect(result.current.isRaised("joel")).toBe(false);
+  });
+
   it("re-announces your raised hand when someone joins late", async () => {
     const { result } = setup();
     await act(() => result.current.raise());

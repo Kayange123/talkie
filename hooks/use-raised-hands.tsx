@@ -67,7 +67,13 @@ export const RaisedHandsProvider = ({ children }: { children: React.ReactNode })
     const offCustom = call.on("custom", (event) => {
       const data = event.custom;
       if (data?.type !== HAND_EVENT) return;
-      const userId: string = data.target ?? event.user.id;
+      const sender = event.user.id;
+      const userId: string = data.target ?? sender;
+      // The Lower button is only shown to the hand's owner and the host, but
+      // events can be crafted, so enforce it here: only the owner may raise
+      // their own hand, and only the owner or the host may lower it.
+      const isHost = sender === call.state.createdBy?.id;
+      if (userId !== sender && (data.raised || !isHost)) return;
       if (data.raised) {
         add({ userId, name: event.user.name || event.user.id });
         if (userId !== localUserId) {
