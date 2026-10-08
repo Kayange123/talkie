@@ -36,6 +36,7 @@ export const stream = {
     backgroundFilter: undefined as "blur" | "image" | undefined,
   },
   viewParticipant: undefined as Record<string, unknown> | undefined,
+  participants: [] as Record<string, unknown>[],
 };
 
 const listeners = new Map<string, Set<Listener>>();
@@ -52,6 +53,8 @@ export const call = {
   sendCustomEvent: vi.fn(),
   sendReaction: vi.fn(),
   resetReaction: vi.fn(),
+  setSortParticipantsBy: vi.fn(),
+  setViewport: vi.fn(() => vi.fn()),
   on: vi.fn((name: string, fn: Listener) => {
     if (!listeners.has(name)) listeners.set(name, new Set());
     listeners.get(name)!.add(fn);
@@ -91,7 +94,10 @@ export const resetStream = () => {
     capabilities: new Set(["screenshare", "create-reaction", "start-record-call", "stop-record-call"]),
     filters: { isSupported: true, isReady: true, backgroundFilter: undefined },
     viewParticipant: undefined,
+    participants: [],
   });
+  call.setSortParticipantsBy.mockClear();
+  call.setViewport.mockClear();
   listeners.clear();
   for (const fn of [call.endCall, call.leave, call.sendCustomEvent, call.sendReaction, call.resetReaction]) {
     fn.mockReset().mockResolvedValue(undefined);
@@ -126,9 +132,15 @@ export const sdkMock = {
     ":smile:": "😀",
   },
   hasAudio: (p: { muted?: boolean }) => !p.muted,
+  hasScreenShare: (p: { sharing?: boolean }) => !!p.sharing,
+  defaultSortPreset: "default-sort",
+  paginatedLayoutSortPreset: "paginated-sort",
+  speakerLayoutSortPreset: "speaker-sort",
   useCall: () => call,
   useCallStateHooks: () => ({
     useCallCallingState: () => stream.callingState,
+    useParticipants: () => stream.participants,
+    useRemoteParticipants: () => stream.participants.filter((p) => !p.isLocalParticipant),
     useLocalParticipant: () => ({ userId: stream.localUserId }),
     useCallCustomData: () => ({ description: stream.description }),
     useCallStartedAt: () => stream.startedAt,
@@ -163,6 +175,12 @@ export const sdkMock = {
   DeviceSettings: () => null,
   CallStats: () => <div data-testid="call-stats" />,
   CallParticipantsList: () => <div data-testid="participants" />,
-  PaginatedGridLayout: () => <div data-testid="grid-layout" />,
-  SpeakerLayout: () => <div data-testid="speaker-layout" />,
+  ParticipantView: ({ participant, trackType }: { participant: { name: string }; trackType?: string }) => (
+    <div data-testid="participant-view" data-track={trackType ?? "videoTrack"}>
+      {participant.name}
+    </div>
+  ),
+  ParticipantsAudio: ({ participants }: { participants: unknown[] }) => (
+    <div data-testid="participants-audio" data-count={participants.length} />
+  ),
 };
