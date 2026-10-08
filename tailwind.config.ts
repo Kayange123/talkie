@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 const config = {
-  darkMode: ["class"],
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -49,19 +49,25 @@ const config = {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
+        // Theme-aware (see app/globals.css): these flip between dark and
+        // light. The names predate theming; dark-* are surfaces, sky-* text.
         dark: {
-          1: "#1C1F2E",
-          2: "#161925",
-          3: "#252A41",
-          4: "#1E2757",
+          1: "rgb(var(--c-dark-1) / <alpha-value>)",
+          2: "rgb(var(--c-dark-2) / <alpha-value>)",
+          3: "rgb(var(--c-dark-3) / <alpha-value>)",
+          4: "rgb(var(--c-dark-4) / <alpha-value>)",
         },
+        fg: "rgb(var(--c-fg) / <alpha-value>)",
+        "warn-text": "rgb(var(--c-warn-text) / <alpha-value>)",
+        "danger-text": "rgb(var(--c-danger-text) / <alpha-value>)",
+        shade: "rgb(var(--c-shadow) / <alpha-value>)",
         blue: {
           1: "#0E78F9",
         },
         sky: {
-          1: "#C9DDFF",
-          2: "#ECF0FF",
-          3: "#F5FCFF",
+          1: "rgb(var(--c-sky-1) / <alpha-value>)",
+          2: "rgb(var(--c-sky-2) / <alpha-value>)",
+          3: "rgb(var(--c-sky-3) / <alpha-value>)",
         },
         orange: {
           1: "#FF742E",
