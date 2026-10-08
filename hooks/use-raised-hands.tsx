@@ -62,28 +62,36 @@ export const interpretHandEvent = (event: HandEventLike, hostId: string | undefi
  * events. New joiners don't receive past events, so anyone with a hand up
  * re-announces it when someone joins.
  */
-export const RaisedHandsProvider = ({ children }: { children: React.ReactNode }) => {
-  const call = useCall();
-  const { useLocalParticipant } = useCallStateHooks();
-  const localUserId = useLocalParticipant()?.userId;
-  const { toast } = useToast();
-  const [hands, setHands] = useState<RaisedHand[]>([]);
+type Call = NonNullable<ReturnType<typeof useCall>>;
 
-  const myHandRaised = !!localUserId && hands.some((h) => h.userId === localUserId);
+/** The ordered list of raised hands, with idempotent add/remove. */
+const useHandList = () => {
+  const [hands, setHands] = useState<RaisedHand[]>([]);
+  const add = useCallback((hand: RaisedHand) => {
+    setHands((prev) => (prev.some((h) => h.userId === hand.userId) ? prev : [...prev, hand]));
+  }, []);
+  const remove = useCallback((userId: string) => {
+    setHands((prev) => prev.filter((h) => h.userId !== userId));
+  }, []);
+  return { hands, add, remove };
+};
+
+interface HandSyncOptions {
+  call: Call | undefined;
+  localUserId: string | undefined;
+  myHandRaised: boolean;
+  add: (hand: RaisedHand) => void;
+  remove: (userId: string) => void;
+}
+
+/** Applies other people's hand events, and re-announces ours for late joiners. */
+const useHandSync = ({ call, localUserId, myHandRaised, add, remove }: HandSyncOptions) => {
+  const { toast } = useToast();
   // Read inside event handlers without resubscribing on every change.
   const myHandRaisedRef = useRef(myHandRaised);
   useEffect(() => {
     myHandRaisedRef.current = myHandRaised;
   }, [myHandRaised]);
-
-  const add = useCallback((hand: RaisedHand) => {
-    setHands((prev) =>
-      prev.some((h) => h.userId === hand.userId) ? prev : [...prev, hand]
-    );
-  }, []);
-  const remove = useCallback((userId: string) => {
-    setHands((prev) => prev.filter((h) => h.userId !== userId));
-  }, []);
 
   useEffect(() => {
     if (!call) return;
@@ -91,22 +99,16 @@ export const RaisedHandsProvider = ({ children }: { children: React.ReactNode })
     const offCustom = call.on("custom", (event) => {
       const change = interpretHandEvent(event, call.state.createdBy?.id);
       if (!change) return;
-      if (!change.raised) {
-        remove(change.userId);
-        return;
-      }
+      if (!change.raised) return remove(change.userId);
       add({ userId: change.userId, name: change.name });
       if (change.userId !== localUserId) {
         toast({ title: `${change.name} raised their hand` });
       }
     });
-
     const offJoined = call.on("call.session_participant_joined", () => {
-      if (myHandRaisedRef.current) {
-        call.sendCustomEvent({ type: HAND_EVENT, raised: true }).catch(() => {});
-      }
+      if (!myHandRaisedRef.current) return;
+      call.sendCustomEvent({ type: HAND_EVENT, raised: true }).catch(() => {});
     });
-
     const offLeft = call.on("call.session_participant_left", (event) => {
       remove(event.participant.user.id);
     });
@@ -117,7 +119,14 @@ export const RaisedHandsProvider = ({ children }: { children: React.ReactNode })
       offLeft();
     };
   }, [call, localUserId, add, remove, toast]);
+};
 
+/** Raising and lowering, applied locally right away and sent to everyone. */
+const useHandActions = (
+  call: Call | undefined,
+  localUserId: string | undefined,
+  { add, remove }: Pick<HandSyncOptions, "add" | "remove">
+) => {
   const raise = useCallback(async () => {
     if (!call || !localUserId) return;
     add({ userId: localUserId, name: "You" });
@@ -129,14 +138,24 @@ export const RaisedHandsProvider = ({ children }: { children: React.ReactNode })
       if (!call || !localUserId) return;
       const target = userId ?? localUserId;
       remove(target);
-      await call.sendCustomEvent({
-        type: HAND_EVENT,
-        raised: false,
-        ...(target !== localUserId && { target }),
-      });
+      const forSomeoneElse = target !== localUserId;
+      await call.sendCustomEvent({ type: HAND_EVENT, raised: false, ...(forSomeoneElse && { target }) });
     },
     [call, localUserId, remove]
   );
+
+  return { raise, lower };
+};
+
+export const RaisedHandsProvider = ({ children }: { children: React.ReactNode }) => {
+  const call = useCall();
+  const { useLocalParticipant } = useCallStateHooks();
+  const localUserId = useLocalParticipant()?.userId;
+  const { hands, add, remove } = useHandList();
+  const myHandRaised = !!localUserId && hands.some((h) => h.userId === localUserId);
+
+  useHandSync({ call, localUserId, myHandRaised, add, remove });
+  const { raise, lower } = useHandActions(call, localUserId, { add, remove });
 
   const value = useMemo<RaisedHandsValue>(
     () => ({
