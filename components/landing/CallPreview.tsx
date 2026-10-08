@@ -35,10 +35,10 @@ const CallPreview = () => {
 
       <div
         aria-hidden
-        className="rounded-[28px] bg-dark-1 p-3 shadow-[0_40px_80px_-20px_rgba(5,8,20,0.8)] ring-1 ring-white/[0.06] sm:p-4"
+        className="rounded-[28px] bg-dark-1 p-3 shadow-[0_40px_80px_-20px_rgb(var(--c-shadow)/0.8)] [[data-theme=light]_&]:shadow-[0_30px_60px_-24px_rgb(var(--c-shadow)/0.22)] ring-1 ring-fg/[0.06] sm:p-4"
       >
         <div className="mb-3 flex items-center justify-between gap-3 px-1 sm:mb-4">
-          <p className="truncate text-sm font-semibold text-white sm:text-base">
+          <p className="truncate text-sm font-semibold text-fg sm:text-base">
             Weekly sync
           </p>
           <span className="flex min-w-0 items-center gap-2 rounded-full bg-dark-3 px-3 py-1.5 text-xs text-sky-1 sm:text-sm">
@@ -65,7 +65,7 @@ const CallPreview = () => {
               >
                 {initials}
               </span>
-              <span className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-md bg-dark-2/80 px-2 py-1 text-xs font-medium text-white">
+              <span className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-md bg-dark-2/80 px-2 py-1 text-xs font-medium text-fg">
                 {muted && <MicOffIcon className="size-3 text-sky-1" />}
                 {name}
               </span>
@@ -78,7 +78,7 @@ const CallPreview = () => {
             <span
               key={label}
               title={label}
-              className="flex-center size-10 rounded-full bg-[#19232d] text-white"
+              className="flex-center size-10 rounded-full bg-dark-3 text-fg"
             >
               <Icon className="size-4" />
             </span>

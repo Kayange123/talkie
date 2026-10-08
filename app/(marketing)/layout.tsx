@@ -5,7 +5,7 @@ import React from "react";
 // Shared chrome for the public pages: landing, terms and privacy.
 const MarketingLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex min-h-screen flex-col bg-dark-2 text-white">
+    <div className="flex min-h-screen flex-col bg-dark-2 text-fg">
       <SiteHeader />
       <div className="flex-1">{children}</div>
       <SiteFooter />

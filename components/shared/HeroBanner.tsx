@@ -13,8 +13,8 @@ const HeroBanner = () => {
   const nextStartsAt = nextCall?.state.startsAt;
 
   return (
-    <div className="h-[260px] w-full overflow-hidden rounded-[20px] bg-hero bg-cover bg-center lg:h-[300px]">
-      <div className="flex h-full flex-col justify-between bg-gradient-to-r from-dark-2/70 to-transparent px-5 py-7 lg:p-10">
+    <div className="h-[260px] w-full overflow-hidden rounded-[20px] bg-hero bg-cover bg-center text-white lg:h-[300px]">
+      <div className="flex h-full flex-col justify-between bg-gradient-to-r from-[#161925]/70 to-transparent px-5 py-7 lg:p-10">
         {!isLoading && (
           <Link
             href={nextCall ? `/meeting/${nextCall.id}` : "/upcoming"}
@@ -40,7 +40,7 @@ const HeroBanner = () => {
                   minute: "2-digit",
                 })}
               </h1>
-              <p className="animate-fade-in text-lg font-medium text-sky-1 lg:text-2xl">
+              <p className="animate-fade-in text-lg font-medium text-[#C9DDFF] lg:text-2xl">
                 {new Intl.DateTimeFormat(undefined, {
                   dateStyle: "full",
                 }).format(now)}

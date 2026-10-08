@@ -20,7 +20,7 @@ const MeetingPage = () => {
 
   if (!call) {
     return (
-      <main className="flex-center h-screen w-full flex-col gap-4 px-6 text-center text-white">
+      <main className="flex-center h-screen w-full flex-col gap-4 px-6 text-center text-fg">
         <div className="flex-center size-16 rounded-full bg-dark-3">
           <VideoOffIcon className="size-8 text-sky-1" />
         </div>
