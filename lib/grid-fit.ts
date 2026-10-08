@@ -37,6 +37,13 @@ const fitColumns = (
 };
 
 /**
+ * Strictly bigger only: on a tie the fewer-column layout, found first, wins,
+ * which keeps 4 people as 2x2 rather than 3+1.
+ */
+const isBigger = (candidate: GridFit, best: GridFit | null) =>
+  !best || candidate.tileWidth > best.tileWidth + 1;
+
+/**
  * The column count that gives `count` tiles of a fixed aspect ratio the
  * largest size inside the box. Tries every column count; cheap for the
  * handful of tiles on a page.
@@ -45,9 +52,7 @@ export function fitGrid(options: GridFitOptions): GridFit | null {
   let best: GridFit | null = null;
   for (let cols = 1; cols <= options.count; cols++) {
     const fit = fitColumns(cols, options);
-    // Strictly bigger only: on a tie the fewer-column layout, found first,
-    // wins, which keeps 4 people as 2x2 rather than 3+1.
-    if (fit && (!best || fit.tileWidth > best.tileWidth + 1)) best = fit;
+    if (fit && isBigger(fit, best)) best = fit;
   }
   return best;
 }
