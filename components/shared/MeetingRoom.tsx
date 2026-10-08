@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  CallingState,
-  PaginatedGridLayout,
-  SpeakerLayout,
-  useCallStateHooks,
-} from "@stream-io/video-react-sdk";
+import { CallingState, useCallStateHooks } from "@stream-io/video-react-sdk";
 import { useState } from "react";
 import { PhoneOffIcon } from "lucide-react";
 import { Button } from "../ui/button";
@@ -15,7 +10,8 @@ import { RaisedHandsProvider } from "@/hooks/use-raised-hands";
 import MeetingHeader from "../meeting/MeetingHeader";
 import ControlBar, { LayoutMode } from "../meeting/ControlBar";
 import SidePanel from "../meeting/SidePanel";
-import { ParticipantTileUI, TilePlaceholder } from "../meeting/ParticipantTile";
+import TalkieGrid from "../meeting/TalkieGrid";
+import SpeakerStage from "../meeting/SpeakerStage";
 
 /** "Auto" shows the grid, switching to speaker view while someone shares. */
 export const useEffectiveLayout = (layout: LayoutMode): "grid" | "speaker" => {
@@ -28,19 +24,7 @@ export const useEffectiveLayout = (layout: LayoutMode): "grid" | "speaker" => {
 const MeetingStage = ({ layout }: { layout: LayoutMode }) => {
   const effective = useEffectiveLayout(layout);
 
-  return effective === "grid" ? (
-    <PaginatedGridLayout
-      ParticipantViewUI={ParticipantTileUI}
-      VideoPlaceholder={TilePlaceholder}
-    />
-  ) : (
-    <SpeakerLayout
-      participantsBarPosition="right"
-      ParticipantViewUISpotlight={ParticipantTileUI}
-      ParticipantViewUIBar={ParticipantTileUI}
-      VideoPlaceholder={TilePlaceholder}
-    />
-  );
+  return effective === "grid" ? <TalkieGrid /> : <SpeakerStage />;
 };
 
 const MeetingRoom = () => {
@@ -81,8 +65,14 @@ const MeetingRoom = () => {
         />
 
         <div className="relative flex min-h-0 flex-1 gap-4 p-3 sm:p-5">
-          <main aria-label="Participants' video" className="talkie-stage min-w-0 flex-1">
-            <MeetingStage layout={layout} />
+          <main
+            aria-label="Participants' video"
+            className="talkie-stage relative min-h-0 min-w-0 flex-1 overflow-hidden"
+          >
+            {/* Absolute fill gives the layouts a definite size to fit into. */}
+            <div className="absolute inset-0">
+              <MeetingStage layout={layout} />
+            </div>
           </main>
           {panelOpen && <SidePanel onClose={() => setPanelOpen(false)} />}
         </div>
