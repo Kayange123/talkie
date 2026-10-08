@@ -163,6 +163,13 @@ describe("ControlBar", () => {
       expect(devices.toggleCallRecording).toHaveBeenCalledOnce();
     });
 
+    it("offers to stop a recording that's running", async () => {
+      stream.recording = true;
+      renderBar();
+      await userEvent.click(button(/^more$/i));
+      expect(screen.getByRole("menuitem", { name: /stop recording/i })).toBeInTheDocument();
+    });
+
     it("hides recording from people who can't record", async () => {
       stream.capabilities.delete("start-record-call");
       stream.capabilities.delete("stop-record-call");
